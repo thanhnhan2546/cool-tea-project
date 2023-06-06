@@ -5,6 +5,7 @@ class ErrorsApp extends Error {
 }
 
 const handleErrors = (err, req, res, next) => {
+  console.log("err: ", err);
   if (!(err instanceof ErrorsApp)) {
     err = new ErrorsApp(500, "Internal Server !");
   }

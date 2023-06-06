@@ -2,7 +2,7 @@ const { DataTypes, Sequelize } = require("sequelize");
 
 module.exports = (sequelize) => {
   return sequelize.define(
-    "Products",
+    "Categories",
     {
       id: {
         type: DataTypes.UUID,
@@ -13,22 +13,6 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-      },
-      idCategory: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        field: "id_category",
-      },
-
-      image: {
-        type: DataTypes.STRING,
-      },
-      description: {
-        type: DataTypes.TEXT,
-      },
-      status: {
-        type: DataTypes.ENUM("0", "1"),
-        defaultValue: "1",
       },
       createAt: {
         type: "TIMESTAMP",
@@ -43,7 +27,7 @@ module.exports = (sequelize) => {
     },
 
     {
-      tableName: "products",
+      tableName: "categories",
       timestamps: false,
     }
   );

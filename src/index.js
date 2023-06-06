@@ -7,7 +7,7 @@ const { sequelize } = require("./models");
 
 app.use(express.json());
 
-sequelize.sync({ alter: true });
+// sequelize.sync({ alter: true });
 app.use("/api/v1", v1);
 
 app.use(handleErrors);

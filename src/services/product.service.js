@@ -1,29 +1,28 @@
-const { Op } = require("sequelize");
+const { Op, literal } = require("sequelize");
 const { Products } = require("../models");
 
 class ProductsService {
   async filterProducts(req) {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.qurey.limit) || 10;
+    const page = parseInt(req?.query?.page) || 1;
+    const limit = parseInt(req?.qurey?.limit) || 10;
     const offset = (page - 1) * limit;
-    const sortBy = req.query.sorBy || "create_at";
-    const sortOrder = req.query.sortOrder || "ASC";
-    const searchQuery = req.query.search || "";
+    const sortBy = req?.query?.sorBy || "create_at";
+    const sortOrder = req?.query?.sortOrder || "ASC";
+    const searchQuery = req?.query?.search || "";
 
     try {
       const where = {
-        productName: { [Op.like]: `%${searchQuery}%` },
+        name: { [Op.like]: `%${searchQuery}%` },
       };
 
       const { rows, count } = await Products.findAndCountAll({
         where,
         limit,
         offset,
-        order: sequelize.literal(
+        order: literal(
           `CONVERT(${sortBy} USING utf8mb4) COLLATE utf8mb4_unicode_ci ${sortOrder}`
         ),
       });
-
       const totalPages = Math.ceil(count / limit);
 
       return {
@@ -32,6 +31,12 @@ class ProductsService {
         currentPage: page,
         data: rows,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+  async createProduct(product) {
+    try {
     } catch (error) {
       throw error;
     }

@@ -2,33 +2,19 @@ const { DataTypes, Sequelize } = require("sequelize");
 
 module.exports = (sequelize) => {
   return sequelize.define(
-    "Products",
+    "Product_prices",
     {
-      id: {
+      idProduct: {
         type: DataTypes.UUID,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4,
       },
-      name: {
-        type: DataTypes.STRING,
+      size: {
+        type: DataTypes.ENUM("M", "L"),
+        primaryKey: true,
+      },
+      price: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
-      },
-      idCategory: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        field: "id_category",
-      },
-
-      image: {
-        type: DataTypes.STRING,
-      },
-      description: {
-        type: DataTypes.TEXT,
-      },
-      status: {
-        type: DataTypes.ENUM("0", "1"),
-        defaultValue: "1",
       },
       createAt: {
         type: "TIMESTAMP",
@@ -41,9 +27,8 @@ module.exports = (sequelize) => {
         field: "update_at",
       },
     },
-
     {
-      tableName: "products",
+      tableName: "product_prices",
       timestamps: false,
     }
   );

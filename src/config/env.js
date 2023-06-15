@@ -8,6 +8,9 @@ const {
   DB_PORT,
   DB_DIALECT,
   DB_NAME,
+  CLOUDINARY_NAME,
+  CLOUDINARY_KEY,
+  CLOUDINARY_SECRET,
 } = process.env;
 
 module.exports = {
@@ -19,4 +22,7 @@ module.exports = {
   DB_PORT,
   DB_DIALECT,
   DB_NAME,
+  CLOUDINARY_NAME,
+  CLOUDINARY_KEY,
+  CLOUDINARY_SECRET,
 };

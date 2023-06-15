@@ -13,7 +13,10 @@ class CategoryService {
   async getOneCategory(id) {
     try {
       const category = await Category.findByPk(id);
-      return category;
+      if (!category) {
+        throw new ErrorsApp(400, "Category is not existed");
+      }
+      return category.dataValue;
     } catch (error) {
       throw error;
     }
@@ -21,7 +24,10 @@ class CategoryService {
   async createCategory(category) {
     try {
       const { name } = category;
-      console.log("name: ", name);
+      // if (!name) {
+      //   throw new ErrorsApp(400, "Request invalid");
+      // }
+
       const selectCate = await Category.findOne({
         where: { name },
       });

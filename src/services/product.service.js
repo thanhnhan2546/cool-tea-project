@@ -1,5 +1,7 @@
 const { Op, literal } = require("sequelize");
 const { Products } = require("../models");
+const categoryService = require("./category.service");
+const { ErrorsApp } = require("../helpers/error");
 
 class ProductsService {
   async filterProducts(req) {
@@ -35,8 +37,23 @@ class ProductsService {
       throw error;
     }
   }
+  async getOneProduct(id) {
+    try {
+      const product = await Products.findByPk(id);
+      if (!product) {
+        throw new ErrorsApp(400, "Product is not exitsed");
+      }
+      return product.dataValue;
+    } catch (error) {
+      throw error;
+    }
+  }
   async createProduct(product) {
     try {
+      await categoryService.getOneCategory(product.idCategory);
+
+      const createProduct = await Products.create(product);
+      return createProduct;
     } catch (error) {
       throw error;
     }

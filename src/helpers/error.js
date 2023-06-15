@@ -16,8 +16,15 @@ const handleErrors = (err, req, res, next) => {
     message,
   });
 };
+const notFound = (req, res) => {
+  return res.status(404).json({
+    status: "error",
+    message: "Route is not defined",
+  });
+};
 
 module.exports = {
   ErrorsApp,
   handleErrors,
+  notFound,
 };

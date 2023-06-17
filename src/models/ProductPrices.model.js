@@ -1,15 +1,17 @@
 const { DataTypes, Sequelize } = require("sequelize");
+const { currentTime } = require("../config/config");
 
 module.exports = (sequelize) => {
   return sequelize.define(
-    "Product_prices",
+    "ProductPrices",
     {
       idProduct: {
         type: DataTypes.UUID,
         primaryKey: true,
       },
       size: {
-        type: DataTypes.ENUM("M", "L"),
+        type: DataTypes.ENUM("M", "L", "no size"),
+        defaultValue: "no size",
         primaryKey: true,
       },
       price: {
@@ -18,13 +20,13 @@ module.exports = (sequelize) => {
       },
       createAt: {
         type: "TIMESTAMP",
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        field: "create_at",
+        defaultValue: currentTime,
+        field: "created_at",
       },
       updateAt: {
         type: "TIMESTAMP",
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        field: "update_at",
+        defaultValue: currentTime,
+        field: "updated_at",
       },
     },
     {

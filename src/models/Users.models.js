@@ -1,4 +1,5 @@
 const { DataTypes, Sequelize } = require("sequelize");
+const { currentTime } = require("../config/config");
 
 module.exports = (sequelize) => {
   return sequelize.define(
@@ -14,13 +15,13 @@ module.exports = (sequelize) => {
       },
       createAt: {
         type: "TIMESTAMP",
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        field: "create_at",
+        defaultValue: currentTime,
+        field: "created_at",
       },
       updateAt: {
         type: "TIMESTAMP",
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        field: "update_at",
+        defaultValue: currentTime,
+        field: "updated_at",
       },
     },
 

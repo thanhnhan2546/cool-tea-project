@@ -14,23 +14,40 @@ const filterProducts = () => {
     }
   };
 };
+const getProductByCategory = () => {
+  return async (req, res, next) => {
+    try {
+      const { idCate } = req.params;
+      const products = await productService.getProductByCategory(idCate);
+      res.status(200).json(response(products));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
 
 const createProduct = () => {
   return async (req, res, next) => {
     try {
       const validate = productValidate.validate(req.body);
       const err = validate?.error?.details[0];
-      if (err) {
-        if (err.type.search("empty") !== -1) {
-          next(new ErrorsApp(400, `${err.context.label} must not be empty`));
-          return;
-        } else {
-          next(new ErrorsApp(400, `${err.context.label} is invalid`));
-          return;
-        }
-      }
+      err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+
       const createProduct = await productService.createProduct(req.body);
       res.status(200).json(response(createProduct));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+const updateProduct = () => {
+  return async (req, res, next) => {
+    try {
+      const { body, params } = req;
+      const { id } = params;
+      const updateProduct = await productService.updateProduct(body, id);
+      res.status(200).json(response(updateProduct));
     } catch (error) {
       next(error);
     }
@@ -39,4 +56,6 @@ const createProduct = () => {
 module.exports = {
   filterProducts,
   createProduct,
+  getProductByCategory,
+  updateProduct,
 };

@@ -3,7 +3,8 @@ const {
   getAllCategory,
   createCategory,
   updateCategory,
-  deleteCategory,
+  deleteOrRestoreCategory,
+  deletePermanently,
 } = require("../../controllers/category.controller");
 
 const categoryRouter = express.Router();
@@ -11,6 +12,8 @@ const categoryRouter = express.Router();
 categoryRouter.get("", getAllCategory());
 categoryRouter.post("", createCategory());
 categoryRouter.put("/:id", updateCategory());
-categoryRouter.delete("/:id", deleteCategory());
+categoryRouter.delete("/delete/:id", deleteOrRestoreCategory(true));
+categoryRouter.get("/restore/:id", deleteOrRestoreCategory(false));
+categoryRouter.delete("/deletePermanently/:id", deletePermanently);
 
 module.exports = categoryRouter;

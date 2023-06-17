@@ -13,9 +13,20 @@ const productValidate = joi
       .required(),
     image: joi.string(),
     status: joi.string().pattern(new RegExp("^[01]$")),
+    price: joi.number(),
+    prices: joi.array().items(
+      joi.object({
+        size: joi.valid("M", "L").required(),
+        price: joi.number().required(),
+      })
+    ),
   })
   .unknown(true);
 
+const categoryValidate = joi.object({
+  name: joi.string().required(),
+});
 module.exports = {
   productValidate,
+  categoryValidate,
 };

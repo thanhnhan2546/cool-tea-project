@@ -25,15 +25,15 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 
 const Products = require("./Product.model")(sequelize);
 const Category = require("./categories.model")(sequelize);
-const Product_prices = require("./Product_prices.model")(sequelize);
+const ProductPrices = require("./ProductPrices.model")(sequelize);
 
 Category.hasMany(Products, { as: "products", foreignKey: "idCategory" });
 
-Product_prices.belongsTo(Products, { as: "product", foreignKey: "idProduct" });
+ProductPrices.belongsTo(Products, { as: "product", foreignKey: "idProduct" });
 
 module.exports = {
   Products,
   Category,
-  Product_prices,
+  ProductPrices,
   sequelize,
 };

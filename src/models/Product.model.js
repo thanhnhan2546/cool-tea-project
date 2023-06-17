@@ -1,4 +1,5 @@
 const { DataTypes, Sequelize } = require("sequelize");
+const { currentTime } = require("../config/config");
 
 module.exports = (sequelize) => {
   return sequelize.define(
@@ -15,7 +16,7 @@ module.exports = (sequelize) => {
         unique: true,
       },
       idCategory: {
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         allowNull: false,
         field: "id_category",
       },
@@ -30,15 +31,24 @@ module.exports = (sequelize) => {
         type: DataTypes.ENUM("0", "1"),
         defaultValue: "1",
       },
-      createAt: {
-        type: "TIMESTAMP",
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        field: "create_at",
+      deleted: {
+        type: DataTypes.TINYINT,
+        defaultValue: 0,
       },
-      updateAt: {
+      createdAt: {
         type: "TIMESTAMP",
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        field: "update_at",
+        defaultValue: currentTime,
+        field: "created_at",
+      },
+      updatedAt: {
+        type: "TIMESTAMP",
+        defaultValue: currentTime,
+        field: "updated_at",
+      },
+      deletedAt: {
+        type: "TIMESTAMP",
+        defaultValue: currentTime,
+        field: "delete_at",
       },
     },
 

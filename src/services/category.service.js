@@ -1,10 +1,17 @@
+const { Sequelize } = require("sequelize");
 const { ErrorsApp } = require("../helpers/error");
-const { Category } = require("../models");
+const { Category, Products } = require("../models");
+const { currentTime } = require("../config/config");
 
 class CategoryService {
   async getAllCategory() {
     try {
-      const categories = await Category.findAll();
+      const categories = await Category.findAll({
+        include: "products",
+        where: {
+          deleted: false,
+        },
+      });
       return categories;
     } catch (error) {
       throw error;
@@ -16,7 +23,8 @@ class CategoryService {
       if (!category) {
         throw new ErrorsApp(400, "Category is not existed");
       }
-      return category.dataValue;
+
+      return category.dataValues;
     } catch (error) {
       throw error;
     }
@@ -24,10 +32,6 @@ class CategoryService {
   async createCategory(category) {
     try {
       const { name } = category;
-      // if (!name) {
-      //   throw new ErrorsApp(400, "Request invalid");
-      // }
-
       const selectCate = await Category.findOne({
         where: { name },
       });
@@ -42,11 +46,16 @@ class CategoryService {
     }
   }
   async updateCategory(category, id) {
+    console.log("category: ", category);
     try {
       const selectCate = await this.getOneCategory(id);
       if (!selectCate) {
         throw new ErrorsApp(400, "Category is not existed");
       }
+      category = {
+        ...category,
+        updatedAt: currentTime,
+      };
       await Category.update(category, {
         where: { id },
       });
@@ -55,14 +64,45 @@ class CategoryService {
       throw error;
     }
   }
-  async deleteCategory(id) {
+  async deleteOrRestoreCategory(id, hasDel) {
     try {
       const selectCate = await this.getOneCategory(id);
       if (!selectCate) {
         throw new ErrorsApp(400, "Category is not existed");
       }
-      const deleteCate = await Category.destroy({ where: { id } });
+      if ((hasDel && selectCate.deleted) || (!hasDel && !selectCate.deleted)) {
+        throw new ErrorsApp(400, "Request is invalid");
+      }
+      let deleted = {
+        deleted: hasDel,
+      };
+      if (hasDel) {
+        deleted = {
+          ...deleted,
+          deletedAt: currentTime,
+        };
+      }
+      const deleteCate = await Category.update(deleted, { where: { id } });
+      await Products.update(deleted, {
+        where: { idCategory: id },
+      });
       return deleteCate;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async deletePermanently(id) {
+    try {
+      const selectCate = await this.getOneCategory(id);
+      if (!selectCate) {
+        throw new ErrorsApp(400, "Category is not existed");
+      }
+      const deletePer = await Category.destroy({
+        where: {
+          id,
+        },
+      });
+      return deletePer;
     } catch (error) {
       throw error;
     }

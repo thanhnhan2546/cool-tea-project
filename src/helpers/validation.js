@@ -13,10 +13,10 @@ const productValidate = joi
       .required(),
     image: joi.string(),
     status: joi.string().pattern(new RegExp("^[01]$")),
-    price: joi.number(),
+
     prices: joi.array().items(
       joi.object({
-        size: joi.valid("M", "L").required(),
+        size: joi.valid("M", "L", "no size").required(),
         price: joi.number().required(),
       })
     ),
@@ -26,7 +26,22 @@ const productValidate = joi
 const categoryValidate = joi.object({
   name: joi.string().required(),
 });
+
+const updatePriceValidate = joi.object({
+  idProduct: joi
+    .string()
+    .pattern(
+      new RegExp(
+        "^[0-9(a-f|A-F)]{8}-[0-9(a-f|A-F)]{4}-4[0-9(a-f|A-F)]{3}-[89ab][0-9(a-f|A-F)]{3}-[0-9(a-f|A-F)]{12}$"
+      )
+    )
+    .required(),
+  size: joi.valid("M", "L", "no size").required(),
+  price: joi.number().required(),
+});
+
 module.exports = {
   productValidate,
   categoryValidate,
+  updatePriceValidate,
 };

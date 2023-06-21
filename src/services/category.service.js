@@ -1,4 +1,3 @@
-const { Sequelize } = require("sequelize");
 const { ErrorsApp } = require("../helpers/error");
 const { Category, Products } = require("../models");
 const { currentTime } = require("../config/config");
@@ -97,11 +96,17 @@ class CategoryService {
       if (!selectCate) {
         throw new ErrorsApp(400, "Category is not existed");
       }
+      await Products.destroy({
+        where: {
+          idCategory: id,
+        },
+      });
       const deletePer = await Category.destroy({
         where: {
           id,
         },
       });
+
       return deletePer;
     } catch (error) {
       throw error;

@@ -1,8 +1,7 @@
-const { Op, literal, Sequelize } = require("sequelize");
+const { Op, literal } = require("sequelize");
 const { Products, ProductPrices } = require("../models");
 const categoryService = require("./category.service");
 const { ErrorsApp } = require("../helpers/error");
-const productPriceService = require("./productPrice.service");
 const { currentTime } = require("../config/config");
 
 class ProductsService {
@@ -17,6 +16,7 @@ class ProductsService {
     try {
       const where = {
         name: { [Op.like]: `%${searchQuery}%` },
+        deleted: false,
       };
 
       const { rows, count } = await Products.findAndCountAll({
@@ -26,6 +26,11 @@ class ProductsService {
         order: literal(
           `CONVERT(${sortBy} USING utf8mb4) COLLATE utf8mb4_unicode_ci ${sortOrder}`
         ),
+        attributes: { exclude: ["deleted"] },
+        include: {
+          model: ProductPrices,
+          as: "prices",
+        },
       });
       const totalPages = Math.ceil(count / limit);
 
@@ -72,11 +77,31 @@ class ProductsService {
       const category = await categoryService.getOneCategory(
         product?.idCategory
       );
-      if (category.hasSize && !product.prices) {
-        throw new ErrorsApp(400, "product must have size");
+      // console.log(category.hasSize);
+      for (let p of product.prices) {
+        if (category.hasSize && p.size !== "M" && p.size !== "L") {
+          return false;
+        }
+
+        if (
+          !category.hasSize &&
+          (p.size === "M" || p.size === "L" || product.prices.length > 1)
+        ) {
+          return false;
+        }
       }
-      if (!category.hasSize && !product.price) {
-        throw new ErrorsApp(400, "category hasn't size and only price");
+
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createProduct(product) {
+    try {
+      const checkSize = await this.checkCateAndHasSize(product);
+      if (!checkSize) {
+        throw new ErrorsApp(400, "Prices is invalid");
       }
       const checkName = await Products.findOne({
         where: {
@@ -85,37 +110,20 @@ class ProductsService {
       });
 
       if (checkName) {
-        throw new ErrorsApp(400, "product name is existed");
+        throw new ErrorsApp(400, "Product name is existed");
       }
-      return category.hasSize;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async createProduct(product) {
-    try {
-      const check = await this.checkCateAndHasSize(product);
       const createProduct = await Products.create(product);
-      if (!check) {
-        const price = {
+
+      for (let prices of product.prices) {
+        const createPrice = {
           idProduct: createProduct.dataValues.id,
-          size: product.size,
-          price: product.price,
+          size: prices.size,
+          price: prices.price,
         };
-        await productPriceService.createPrice(price);
-      } else {
-        for (let price of product.prices) {
-          const createPrice = {
-            idProduct: createProduct.dataValues.id,
-            size: price.size,
-            price: price.price,
-          };
-          await productPriceService.createPrice(createPrice);
-        }
+        await this.createPrice(createPrice);
       }
 
-      return createProduct.dataValues.name;
+      return createProduct.dataValues;
     } catch (error) {
       throw error;
     }
@@ -151,6 +159,142 @@ class ProductsService {
         },
       });
       return "Update Success";
+    } catch (error) {
+      throw error;
+    }
+  }
+  async deleteOreRestoreProduct(id, hasDel) {
+    try {
+      const selectProduct = await this.getOneProduct(id);
+      if (!selectProduct) {
+        throw new ErrorsApp(400, "Product is not existed");
+      }
+      if (
+        (hasDel && selectProduct.deleted) ||
+        (!hasDel && !selectProduct.deleted)
+      ) {
+        throw new ErrorsApp(400, "Request is invalid");
+      }
+      let del = {
+        deleted: hasDel,
+      };
+
+      if (hasDel) {
+        del = {
+          ...del,
+          deletedAt: currentTime,
+        };
+      }
+      await Products.update(del, {
+        where: {
+          id,
+        },
+      });
+      return `Success `;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deletePernamently(id) {
+    try {
+      const selectProduct = await this.getOneProduct(id);
+      if (!selectProduct) {
+        throw new ErrorsApp(400, "Product is not existed");
+      }
+      await ProductPrices.destroy({
+        where: {
+          idProduct: id,
+        },
+      });
+      await Products.destroy({
+        where: {
+          id,
+        },
+      });
+      return "Delete success";
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getOneProductPrice(idProduct, size) {
+    try {
+      const getOnePrice = await ProductPrices.findOne({
+        where: {
+          idProduct,
+          size,
+        },
+      });
+
+      return getOnePrice;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async createPrice(price) {
+    try {
+      const createPrice = await ProductPrices.create(price);
+      return createPrice;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updatePrice(id, size, price) {
+    try {
+      await this.getOneProduct(id);
+      const getPrice = await this.getOneProductPrice(id, size);
+      if (!getPrice) {
+        throw new ErrorsApp(400, "Size of product is existed");
+      }
+      await ProductPrices.update(
+        { price, updatedAt: currentTime },
+        {
+          where: {
+            idProduct: id,
+            size,
+          },
+        }
+      );
+      return await this.getOneProductPrice(id, size);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async insertSize(productSize) {
+    try {
+      const { idProduct, size } = productSize;
+      await this.getOneProduct(idProduct);
+
+      const oneSize = await this.getOneProductPrice(idProduct, size);
+      if (oneSize) {
+        throw new ErrorsApp(400, "Size of Product is existed");
+      }
+
+      const insertSize = await ProductPrices.create(productSize);
+      return insertSize;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteSize(idProduct, size) {
+    try {
+      await this.getOneProduct(idProduct);
+      const selectPrice = await this.getOneProductPrice(idProduct, size);
+      if (!selectPrice) {
+        throw new ErrorsApp(400, "Size of product is not extisted");
+      }
+
+      await ProductPrices.destroy({
+        where: {
+          idProduct,
+          size,
+        },
+      });
+
+      return "Delete Success";
     } catch (error) {
       throw error;
     }

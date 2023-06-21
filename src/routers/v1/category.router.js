@@ -14,6 +14,6 @@ categoryRouter.post("", createCategory());
 categoryRouter.put("/:id", updateCategory());
 categoryRouter.delete("/delete/:id", deleteOrRestoreCategory(true));
 categoryRouter.get("/restore/:id", deleteOrRestoreCategory(false));
-categoryRouter.delete("/deletePermanently/:id", deletePermanently);
+categoryRouter.delete("/delete-permanently/:id", deletePermanently);
 
 module.exports = categoryRouter;

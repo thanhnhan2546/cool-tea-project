@@ -18,12 +18,12 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      createAt: {
+      createdAt: {
         type: "TIMESTAMP",
         defaultValue: currentTime,
         field: "created_at",
       },
-      updateAt: {
+      updatedAt: {
         type: "TIMESTAMP",
         defaultValue: currentTime,
         field: "updated_at",

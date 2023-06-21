@@ -29,7 +29,10 @@ const ProductPrices = require("./ProductPrices.model")(sequelize);
 
 Category.hasMany(Products, { as: "products", foreignKey: "idCategory" });
 
-ProductPrices.belongsTo(Products, { as: "product", foreignKey: "idProduct" });
+Products.hasMany(ProductPrices, {
+  as: "prices",
+  foreignKey: "idProduct",
+});
 
 module.exports = {
   Products,

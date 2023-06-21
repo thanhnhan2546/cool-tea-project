@@ -1,4 +1,4 @@
-const { DataTypes, Sequelize } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const { currentTime } = require("../config/config");
 
 module.exports = (sequelize) => {
@@ -27,6 +27,10 @@ module.exports = (sequelize) => {
       deleted: {
         type: DataTypes.TINYINT,
         defaultValue: 0,
+        get() {
+          const deleted = this.getDataValue("deleted");
+          return deleted ? true : false;
+        },
       },
       createdAt: {
         type: "TIMESTAMP",

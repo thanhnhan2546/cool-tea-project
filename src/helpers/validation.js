@@ -23,9 +23,11 @@ const productValidate = joi
   })
   .unknown(true);
 
-const categoryValidate = joi.object({
-  name: joi.string().required(),
-});
+const categoryAndRoleValidate = joi
+  .object({
+    name: joi.string().required(),
+  })
+  .unknown(true);
 
 const updatePriceValidate = joi.object({
   idProduct: joi
@@ -40,8 +42,18 @@ const updatePriceValidate = joi.object({
   price: joi.number().required(),
 });
 
+const idValidate = joi
+  .string()
+  .pattern(
+    new RegExp(
+      "^[0-9(a-f|A-F)]{8}-[0-9(a-f|A-F)]{4}-4[0-9(a-f|A-F)]{3}-[89ab][0-9(a-f|A-F)]{3}-[0-9(a-f|A-F)]{12}$"
+    )
+  )
+  .required();
+
 module.exports = {
   productValidate,
-  categoryValidate,
+  categoryAndRoleValidate,
   updatePriceValidate,
+  idValidate,
 };

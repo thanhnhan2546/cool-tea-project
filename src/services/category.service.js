@@ -34,7 +34,6 @@ class CategoryService {
       const selectCate = await Category.findOne({
         where: { name },
       });
-      console.log("selectCate: ", selectCate);
       if (selectCate) {
         throw new ErrorsApp(400, "Category is existed");
       }
@@ -45,7 +44,6 @@ class CategoryService {
     }
   }
   async updateCategory(category, id) {
-    console.log("category: ", category);
     try {
       const selectCate = await this.getOneCategory(id);
       if (!selectCate) {

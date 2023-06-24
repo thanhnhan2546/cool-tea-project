@@ -1,6 +1,6 @@
 const { ErrorsApp } = require("../helpers/error");
 const { response } = require("../helpers/response");
-const { categoryValidate } = require("../helpers/validation");
+const { categoryAndRoleValidate } = require("../helpers/validation");
 const categoryService = require("../services/category.service");
 
 const getAllCategory = () => {
@@ -20,7 +20,7 @@ const createCategory = () => {
       if (Array.isArray(req.body)) {
         let name = [];
         for (body of req.body) {
-          const validate = categoryValidate.validate(body);
+          const validate = categoryAndRoleValidate.validate(body);
           const err = validate?.error?.details[0];
           err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
           const createCate = await categoryService.createCategory(body);
@@ -28,7 +28,7 @@ const createCategory = () => {
         }
         res.status(200).json(response(name));
       } else {
-        const validate = categoryValidate.validate(req.body);
+        const validate = categoryAndRoleValidate.validate(req.body);
         const err = validate?.error?.details[0];
         err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
         const createCate = await categoryService.createCategory(req.body);

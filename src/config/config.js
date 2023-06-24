@@ -1,7 +1,6 @@
 const { Sequelize } = require("sequelize");
+const moment = require("moment-timezone");
 
-const currentTime = Sequelize.literal(
-  "CONVERT_TZ(CURRENT_TIMESTAMP(), '+00:00', '+07:00')"
-);
+const currentTime = Sequelize.literal("CURRENT_TIMESTAMP");
 
 module.exports = { currentTime };

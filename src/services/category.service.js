@@ -46,9 +46,7 @@ class CategoryService {
   async updateCategory(category, id) {
     try {
       const selectCate = await this.getOneCategory(id);
-      if (!selectCate) {
-        throw new ErrorsApp(400, "Category is not existed");
-      }
+
       category = {
         ...category,
         updatedAt: currentTime,
@@ -64,10 +62,8 @@ class CategoryService {
   async deleteOrRestoreCategory(id, hasDel) {
     try {
       const selectCate = await this.getOneCategory(id);
-      if (!selectCate) {
-        throw new ErrorsApp(400, "Category is not existed");
-      }
-      if ((hasDel && selectCate.deleted) || (!hasDel && !selectCate.deleted)) {
+
+      if (hasDel == selectCate.deleted) {
         throw new ErrorsApp(400, "Request is invalid");
       }
       let deleted = {

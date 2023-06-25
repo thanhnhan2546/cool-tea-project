@@ -21,8 +21,10 @@ const getOneRole = () => {
   return async (req, res, next) => {
     try {
       const { id } = req.params;
+      console.log("id: ", id);
       const validate = idValidate.validate(id);
-      const err = validate?.error?.details[0];
+      console.log("validate: ", validate);
+      const err = validate?.error;
       err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
       const selectRole = await roleService.getOneRole(id);
       res.status(200).json(response(selectRole));
@@ -58,8 +60,62 @@ const createRole = () => {
   };
 };
 
+const updateRole = () => {
+  return async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const validate =
+        idValidate.validate(id) && categoryAndRoleValidate.validate(req.body);
+      const err = validate?.error;
+      err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+      const updateRole = await roleService.updateRole(req.body, id);
+      res.status(200).json(response(updateRole));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+const deleteOrRestoreRole = (hasDel) => {
+  return async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const validate = idValidate.validate(id);
+      const err = validate?.error;
+      err && next(new ErrorsApp(400, err.message));
+
+      const role = await roleService.deleteOrRestoreRole(id, hasDel);
+
+      res.status(200).json(response(role));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+const deletePermanently = () => {
+  return async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const validate = idValidate.validate(id);
+      const err = validate?.error;
+      err && next(new ErrorsApp(400, err.message));
+
+      const role = await roleService.deletePermanently(id);
+
+      res.status(200).json(response(role));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
 module.exports = {
   getAllRole,
   getOneRole,
   createRole,
+  updateRole,
+  deleteOrRestoreRole,
+  deletePermanently,
 };

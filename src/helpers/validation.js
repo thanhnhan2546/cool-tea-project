@@ -10,6 +10,9 @@ const productValidate = joi
           "^[0-9(a-f|A-F)]{8}-[0-9(a-f|A-F)]{4}-4[0-9(a-f|A-F)]{3}-[89ab][0-9(a-f|A-F)]{3}-[0-9(a-f|A-F)]{12}$"
         )
       )
+      .messages({
+        "string.pattern.base": "id must be a valid UUID format",
+      })
       .required(),
     image: joi.string(),
     status: joi.string().pattern(new RegExp("^[01]$")),
@@ -49,7 +52,9 @@ const idValidate = joi
       "^[0-9(a-f|A-F)]{8}-[0-9(a-f|A-F)]{4}-4[0-9(a-f|A-F)]{3}-[89ab][0-9(a-f|A-F)]{3}-[0-9(a-f|A-F)]{12}$"
     )
   )
-  .required();
+  .messages({
+    "string.pattern.base": "id must be a valid UUID format",
+  });
 
 module.exports = {
   productValidate,

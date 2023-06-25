@@ -1,3 +1,4 @@
+const { currentTime } = require("../config/config");
 const { ErrorsApp } = require("../helpers/error");
 const { Roles } = require("../models");
 
@@ -40,6 +41,62 @@ class RoleService {
       }
       const createRole = await Roles.create(role);
       return createRole;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateRole(role, id) {
+    try {
+      await this.getOneRole(id);
+
+      role = {
+        ...role,
+        updatedAt: currentTime,
+      };
+      await Roles.update(role, {
+        where: { id },
+      });
+
+      return await this.getOneRole(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteOrRestoreRole(id, hasDel) {
+    try {
+      const selectRole = await this.getOneRole(id);
+      if (hasDel == selectRole.deleted) {
+        throw new ErrorsApp(400, "Request is invalid");
+      }
+
+      let del = {
+        deleted: hasDel,
+      };
+
+      if (hasDel) {
+        del = {
+          ...del,
+          deletedAt: currentTime,
+        };
+      }
+
+      await Roles.update(del, { where: { id } });
+
+      return "Success";
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deletePermanently(id) {
+    try {
+      await this.getOneRole(id);
+      await Roles.destroy({
+        where: { id },
+      });
+      return "Success";
     } catch (error) {
       throw error;
     }

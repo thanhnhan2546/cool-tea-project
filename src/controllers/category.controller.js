@@ -21,7 +21,7 @@ const createCategory = () => {
         let name = [];
         for (body of req.body) {
           const validate = categoryAndRoleValidate.validate(body);
-          const err = validate?.error?.details[0];
+          const err = validate?.error;
           err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
           const createCate = await categoryService.createCategory(body);
           name.push(createCate.name);

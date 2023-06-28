@@ -9,7 +9,7 @@ const {
   updatePrice,
   insertSize,
   deleteSize,
-} = require("../../controllers/Product.controller");
+} = require("../../controllers/product.controller");
 
 const productRouter = express.Router();
 

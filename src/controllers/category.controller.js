@@ -22,7 +22,9 @@ const createCategory = () => {
         for (body of req.body) {
           const validate = categoryAndRoleValidate.validate(body);
           const err = validate?.error;
-          err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+          if (err) {
+            return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+          }
           const createCate = await categoryService.createCategory(body);
           name.push(createCate.name);
         }
@@ -30,7 +32,9 @@ const createCategory = () => {
       } else {
         const validate = categoryAndRoleValidate.validate(req.body);
         const err = validate?.error?.details[0];
-        err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+        if (err) {
+          return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+        }
         const createCate = await categoryService.createCategory(req.body);
         res.status(200).json(response(createCate.name));
       }
@@ -68,7 +72,7 @@ const deleteOrRestoreCategory = (hasDel) => {
 };
 
 const deletePermanently = () => {
-  return async (req, res, nex) => {
+  return async (req, res, next) => {
     try {
       const { id } = req.params;
       await categoryService.deletePermanently(id);

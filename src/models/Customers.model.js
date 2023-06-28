@@ -70,6 +70,20 @@ module.exports = (sequelize) => {
     {
       tableName: "customers",
       timestamps: false,
+      defaultScope: {
+        attributes: {
+          exclude: ["deleted", "password"],
+        },
+      },
+      hooks: {
+        afterCreate: (record) => {
+          delete record.dataValues.password;
+          delete record.dataValues.createdAt;
+          delete record.dataValues.updatedAt;
+          delete record.dataValues.deletedAt;
+          delete record.dataValues.deleted;
+        },
+      },
     }
   );
 };

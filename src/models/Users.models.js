@@ -28,6 +28,11 @@ module.exports = (sequelize) => {
     {
       tableName: "users",
       timestamps: false,
+      defaultScope: {
+        attributes: {
+          exclude: ["deleted"],
+        },
+      },
     }
   );
 };

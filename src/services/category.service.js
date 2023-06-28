@@ -77,7 +77,7 @@ class CategoryService {
       }
       const deleteCate = await Category.update(deleted, { where: { id } });
       await Products.update(deleted, {
-        where: { idCategory: id },
+        where: { id: id },
       });
       return deleteCate;
     } catch (error) {

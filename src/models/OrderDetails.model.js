@@ -56,6 +56,11 @@ module.exports = (sequelize) => {
     {
       tableName: "order_details",
       timestamps: false,
+      defaultScope: {
+        attributes: {
+          exclude: ["deleted"],
+        },
+      },
     }
   );
 };

@@ -25,7 +25,9 @@ const getOneRole = () => {
       const validate = idValidate.validate(id);
       console.log("validate: ", validate);
       const err = validate?.error;
-      err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+      if (err) {
+        return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+      }
       const selectRole = await roleService.getOneRole(id);
       res.status(200).json(response(selectRole));
     } catch (error) {
@@ -42,7 +44,9 @@ const createRole = () => {
         for (body of req.body) {
           const validate = categoryAndRoleValidate.validate(body);
           const err = validate?.error?.details[0];
-          err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+          if (err) {
+            return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+          }
           const createRole = await roleService.createRole(body);
           name.push(createRole.name);
         }
@@ -50,7 +54,9 @@ const createRole = () => {
       } else {
         const validate = categoryAndRoleValidate.validate(req.body);
         const err = validate?.error?.details[0];
-        err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+        if (err) {
+          return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+        }
         const createRole = await roleService.createRole(req.body);
         res.status(200).json(response(createRole.name));
       }
@@ -68,7 +74,9 @@ const updateRole = () => {
       const validate =
         idValidate.validate(id) && categoryAndRoleValidate.validate(req.body);
       const err = validate?.error;
-      err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+      if (err) {
+        return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+      }
       const updateRole = await roleService.updateRole(req.body, id);
       res.status(200).json(response(updateRole));
     } catch (error) {
@@ -83,7 +91,9 @@ const deleteOrRestoreRole = (hasDel) => {
       const { id } = req.params;
       const validate = idValidate.validate(id);
       const err = validate?.error;
-      err && next(new ErrorsApp(400, err.message));
+      if (err) {
+        return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+      }
 
       const role = await roleService.deleteOrRestoreRole(id, hasDel);
 
@@ -100,7 +110,9 @@ const deletePermanently = () => {
       const { id } = req.params;
       const validate = idValidate.validate(id);
       const err = validate?.error;
-      err && next(new ErrorsApp(400, err.message));
+      if (err) {
+        return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+      }
 
       const role = await roleService.deletePermanently(id);
 

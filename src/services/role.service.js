@@ -1,6 +1,6 @@
 const { currentTime } = require("../config/config");
 const { ErrorsApp } = require("../helpers/error");
-const { Roles } = require("../models");
+const { Roles, Employees } = require("../models");
 
 class RoleService {
   async getAllRole() {
@@ -81,7 +81,7 @@ class RoleService {
           deletedAt: currentTime,
         };
       }
-
+      await Employees.update(del, { where: { idRole: id } });
       await Roles.update(del, { where: { id } });
 
       return "Success";
@@ -93,6 +93,9 @@ class RoleService {
   async deletePermanently(id) {
     try {
       await this.getOneRole(id);
+      await Employees.destroy({
+        where: { idRole: id },
+      });
       await Roles.destroy({
         where: { id },
       });

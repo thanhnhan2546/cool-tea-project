@@ -34,12 +34,9 @@ const OrderDetails = require("./OrderDetails.model")(sequelize);
 
 Category.hasMany(Products, { as: "products", foreignKey: "idCategory" });
 
-Products.hasMany(ProductPrices, {
-  as: "prices",
-  foreignKey: "idProduct",
-});
-
+Products.hasMany(ProductPrices, { as: "prices", foreignKey: "idProduct" });
 Roles.hasMany(Employees, { as: "employees", foreignKey: "idRole" });
+Employees.belongsTo(Roles, { as: "role", foreignKey: "idRole" });
 Employees.hasMany(Orders, { as: "orders", foreignKey: "idEmployee" });
 Customers.hasMany(Orders, { as: "orders", foreignKey: "idCustomer" });
 Orders.hasMany(OrderDetails, { as: "details", foreignKey: "idOrder" });

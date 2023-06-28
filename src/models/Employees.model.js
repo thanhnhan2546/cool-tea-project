@@ -40,6 +40,7 @@ module.exports = (sequelize) => {
       idRole: {
         type: DataTypes.UUID,
         allowNull: false,
+        field: "id_role",
       },
       deleted: {
         type: DataTypes.TINYINT,
@@ -68,6 +69,20 @@ module.exports = (sequelize) => {
     {
       tableName: "employees",
       timestamps: false,
+      defaultScope: {
+        attributes: {
+          exclude: ["password", "deleted", "idRole"],
+        },
+      },
+      hooks: {
+        afterCreate: (record) => {
+          delete record.dataValues.password;
+          delete record.dataValues.createdAt;
+          delete record.dataValues.updatedAt;
+          delete record.dataValues.deletedAt;
+          delete record.dataValues.deleted;
+        },
+      },
     }
   );
 };

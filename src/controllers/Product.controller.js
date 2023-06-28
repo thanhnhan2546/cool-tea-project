@@ -33,7 +33,9 @@ const createProduct = () => {
     try {
       const validate = productValidate.validate(req.body);
       const err = validate?.error?.details[0];
-      err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+      if (err) {
+        return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+      }
 
       const createProduct = await productService.createProduct(req.body);
       res.status(200).json(response(createProduct));
@@ -95,7 +97,9 @@ const updatePrice = () => {
         price,
       });
       const err = validate?.error?.details[0];
-      err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
+      if (err) {
+        return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+      }
       const update = await productService.updatePrice(idProduct, size, price);
       res.status(200).json(response(update));
     } catch (error) {
@@ -109,8 +113,9 @@ const insertSize = () => {
     try {
       const validate = updatePriceValidate.validate(req.body);
       const err = validate?.error?.details[0];
-      err && next(new ErrorsApp(400, err?.message?.replace(/"/g, "")));
-
+      if (err) {
+        return next(new ErrorsApp(400, err?.message.replace(/"/g, "")));
+      }
       const insertSize = await productService.insertSize(req.body);
       res.status(200).json(response(insertSize));
     } catch (error) {

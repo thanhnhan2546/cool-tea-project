@@ -22,7 +22,6 @@ class CategoryService {
       if (!category) {
         throw new ErrorsApp(400, "Category is not existed");
       }
-
       return category.dataValues;
     } catch (error) {
       throw error;
@@ -86,10 +85,8 @@ class CategoryService {
   }
   async deletePermanently(id) {
     try {
-      const selectCate = await this.getOneCategory(id);
-      if (!selectCate) {
-        throw new ErrorsApp(400, "Category is not existed");
-      }
+      await this.getOneCategory(id);
+
       await Products.destroy({
         where: {
           idCategory: id,

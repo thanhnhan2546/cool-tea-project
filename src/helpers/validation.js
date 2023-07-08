@@ -81,7 +81,6 @@ const employeeUpdateValidate = joi
       .message({
         "string.pattern.base": "Phone must be number",
       }),
-
     idRole: joi
       .string()
       .pattern(
@@ -113,6 +112,34 @@ const employeeCreateValidate = employeeUpdateValidate.append({
     })
     .required(),
 });
+
+const customerCreateValidate = joi.object({
+  firstName: joi
+    .string()
+    .pattern(/^[a-zA-ZÀ-ỹ\s']+$/u)
+    .message({
+      "string.pattern.base": "first name can only contain letters",
+    })
+    .required(),
+  lastName: joi
+    .string()
+    .pattern(/^[a-zA-ZÀ-ỹ\s']+$/u)
+    .message({
+      "string.pattern.base": "last name can only contain letters",
+    })
+    .required(),
+  gender: joi.valid("male", "female", "other").required(),
+  dateOfBirth: joi.date().iso().required(),
+  address: joi.string(),
+  phone: joi
+    .string()
+    .pattern(/^\d{10,}$/)
+    .message({
+      "string.pattern.base": "Phone must be number",
+    }),
+  email: joi.string().email().required(),
+  password: joi.string().required(),
+});
 module.exports = {
   productValidate,
   categoryAndRoleValidate,
@@ -120,4 +147,5 @@ module.exports = {
   idValidate,
   employeeUpdateValidate,
   employeeCreateValidate,
+  customerCreateValidate,
 };

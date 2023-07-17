@@ -56,7 +56,7 @@ const deleteOrRestoreEmployee = (hasDel) => {
   return async (req, res, next) => {
     try {
       const { id } = req.params;
-      const employee = await employeeService.deleteOrrestore(id, hasDel);
+      const employee = await employeeService.deleteOrRestore(id, hasDel);
       res.status(200).json(response(employee));
     } catch (error) {
       next(error);
@@ -68,7 +68,7 @@ const deletePermanetly = () => {
   return async (req, res, next) => {
     try {
       const { id } = req.params;
-      await employeeService.deletePernamently(id);
+      await employeeService.deletePermanently(id);
       res.status(200).json(response(`Delete Permanently id: ${id}`));
     } catch (error) {
       next(error);

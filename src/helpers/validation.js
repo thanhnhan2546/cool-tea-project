@@ -20,7 +20,7 @@ const productValidate = joi
     prices: joi.array().items(
       joi.object({
         size: joi.valid("M", "L", "no size").required(),
-        price: joi.number().required(),
+        price: joi.number(),
       })
     ),
   })
@@ -54,7 +54,8 @@ const idValidate = joi
   )
   .messages({
     "string.pattern.base": "id must be a valid UUID format",
-  });
+  })
+  .required();
 
 const employeeUpdateValidate = joi
   .object({
@@ -138,7 +139,46 @@ const customerCreateValidate = joi.object({
       "string.pattern.base": "Phone must be number",
     }),
   email: joi.string().email().required(),
-  password: joi.string().required(),
+  password: joi
+    .string()
+    .min(8)
+    .pattern(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
+    )
+    .message({
+      "string.base": "Password must be a string.",
+      "string.empty": "Password must not be empty.",
+      "string.min": "Password must be at least {#limit} characters long.",
+      "string.pattern.base":
+        "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
+    })
+    .required(),
+});
+
+const createOrderValidate = joi.object({
+  idCustomer: idValidate,
+  idEmployee: joi.string().required(),
+  totalPrice: joi.number().required(),
+  totalQuantity: joi.number().required(),
+  status: joi.valid(0, 1).required(),
+  details: joi
+    .array()
+    .items(
+      joi.object({
+        idProduct: idValidate,
+        amount: joi.number().required(),
+        size: joi.valid("M", "L"),
+        price: joi.number(),
+      })
+    )
+    .required(),
+  extra: joi.array().items(
+    joi.object({
+      idProduct: idValidate,
+      price: joi.number(),
+      amount: joi.number(),
+    })
+  ),
 });
 module.exports = {
   productValidate,
@@ -148,4 +188,5 @@ module.exports = {
   employeeUpdateValidate,
   employeeCreateValidate,
   customerCreateValidate,
+  createOrderValidate,
 };

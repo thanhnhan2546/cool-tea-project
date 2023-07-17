@@ -46,7 +46,9 @@ class ProductsService {
   }
   async getOneProduct(id) {
     try {
-      const product = await Products.findByPk(id);
+      const product = await Products.findByPk(id, {
+        include: "prices",
+      });
       if (!product) {
         throw new ErrorsApp(400, "Product is not exitsed");
       }
@@ -77,7 +79,7 @@ class ProductsService {
       const category = await categoryService.getOneCategory(
         product?.idCategory
       );
-      // console.log(category.hasSize);
+      // console.log(category);
       for (let p of product.prices) {
         if (category.hasSize && p.size !== "M" && p.size !== "L") {
           return false;
@@ -118,7 +120,7 @@ class ProductsService {
         const createPrice = {
           idProduct: createProduct.dataValues.id,
           size: prices.size,
-          price: prices.price,
+          price: prices.price || -1,
         };
         await this.createPrice(createPrice);
       }
@@ -196,7 +198,7 @@ class ProductsService {
     }
   }
 
-  async deletePernamently(id) {
+  async deletePermanently(id) {
     try {
       const selectProduct = await this.getOneProduct(id);
       if (!selectProduct) {
@@ -225,8 +227,7 @@ class ProductsService {
           size,
         },
       });
-
-      return getOnePrice;
+      return getOnePrice?.dataValues;
     } catch (error) {
       throw error;
     }

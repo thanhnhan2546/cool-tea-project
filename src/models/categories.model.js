@@ -20,7 +20,7 @@ module.exports = (sequelize) => {
         defaultValue: 0,
         field: "has_size",
         get() {
-          const hasSize = this.getDataValue("hasSize");
+          const hasSize = this.getDataValue("has_size");
           return hasSize ? true : false;
         },
       },
@@ -55,6 +55,16 @@ module.exports = (sequelize) => {
       defaultScope: {
         attributes: {
           exclude: ["deleted"],
+        },
+      },
+      hooks: {
+        afterCreate: (record) => {
+          console.log(record.dataValues.createdAt);
+        },
+        afterFind: (record) => {
+          if (record) {
+            record.dataValues.hasSize = 0 ? false : true;
+          }
         },
       },
     }

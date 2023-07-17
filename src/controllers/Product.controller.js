@@ -79,7 +79,7 @@ const deletePermanentlyProduct = () => {
     try {
       const { id } = req.params;
 
-      const delPer = await productService.deletePernamently(id);
+      const delPer = await productService.deletePermanently(id);
       res.status(200).json(response(delPer));
     } catch (error) {
       next(error);

@@ -64,6 +64,19 @@ module.exports = (sequelize) => {
           exclude: ["deleted"],
         },
       },
+      hooks: {
+        afterCreate: (record) => {
+          console.log("record: ", record.dataValues.createdAt);
+          delete record.dataValues.deletedAt;
+        },
+        afterFind: async (instance) => {
+          if (instance) {
+            // Thực hiện các tác vụ tùy chỉnh với instance sau khi tìm thấy
+            console.log("Hook afterFind executed");
+            console.log(instance);
+          }
+        },
+      },
     }
   );
 };

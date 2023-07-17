@@ -1,4 +1,4 @@
-const { currentTime } = require("../config/config");
+const { currentTime, hashPassword } = require("../config/config");
 const { ErrorsApp } = require("../helpers/error");
 const { Customers } = require("../models");
 
@@ -21,6 +21,7 @@ class CustomerService {
       if (!customer) {
         throw new ErrorsApp(400, "Customer is not existed");
       }
+      return customer.dataValues;
     } catch (error) {
       throw error;
     }
@@ -35,6 +36,10 @@ class CustomerService {
       if (selectCus) {
         throw new ErrorsApp(400, "Email is existed");
       }
+      customer = {
+        ...customer,
+        password: hashPassword(customer.password),
+      };
       const createCate = await Customers.create(customer);
       return createCate;
     } catch (error) {
@@ -64,23 +69,23 @@ class CustomerService {
       if (hasDel == selectCus.deleted) {
         throw new ErrorsApp(400, "Request is invalid");
       }
-      let deleted = {
+      let del = {
         deleted: hasDel,
       };
       if (hasDel) {
-        deleted = {
-          ...deleted,
+        del = {
+          ...del,
           deletedAt: currentTime,
         };
       }
-      await Customers.update(deleted, { where: { id } });
+      await Customers.update(del, { where: { id } });
       return hasDel ? "Delete Success" : "Restore Success";
     } catch (error) {
       throw error;
     }
   }
 
-  async deletePernamently(id) {
+  async deletePermanently(id) {
     try {
       await this.getOneCustomer(id);
       await Customers.destroy({

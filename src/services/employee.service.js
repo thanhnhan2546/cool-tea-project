@@ -94,7 +94,7 @@ class EmployeeService {
     }
   }
 
-  async deleteOrrestore(id, hasDel) {
+  async deleteOrRestore(id, hasDel) {
     try {
       const selectEmployee = await this.getOneEmployee(id);
       if (hasDel == selectEmployee.deleted) {
@@ -118,7 +118,7 @@ class EmployeeService {
     }
   }
 
-  async deletePernamently(id) {
+  async deletePermanently(id) {
     try {
       await this.getOneEmployee(id);
       await Employees.destroy({

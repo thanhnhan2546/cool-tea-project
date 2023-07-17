@@ -65,17 +65,17 @@ class CategoryService {
       if (hasDel == selectCate.deleted) {
         throw new ErrorsApp(400, "Request is invalid");
       }
-      let deleted = {
+      let del = {
         deleted: hasDel,
       };
       if (hasDel) {
-        deleted = {
-          ...deleted,
+        del = {
+          ...del,
           deletedAt: currentTime,
         };
       }
-      const deleteCate = await Category.update(deleted, { where: { id } });
-      await Products.update(deleted, {
+      const deleteCate = await Category.update(del, { where: { id } });
+      await Products.update(del, {
         where: { id: id },
       });
       return deleteCate;

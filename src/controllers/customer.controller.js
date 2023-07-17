@@ -65,7 +65,7 @@ const deletePermanentlyCustomer = () => {
   return async (req, res, next) => {
     try {
       const { id } = req.params;
-      await customerService.deletePernamently(id);
+      await customerService.deletePermanently(id);
       res.status(200).json(response(`Delete Permanently id: ${id}`));
     } catch (error) {
       next(error);

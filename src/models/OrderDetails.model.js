@@ -5,19 +5,14 @@ module.exports = (sequelize) => {
   return sequelize.define(
     "OderDetails",
     {
-      id: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        defaultValue: DataTypes.UUIDV4,
-      },
       idOrder: {
         type: DataTypes.UUID,
-        allowNull: false,
+        primaryKey: true,
         field: "id_order",
       },
       idProduct: {
         type: DataTypes.UUID,
-        allowNull: false,
+        primaryKey: true,
         field: "id_product",
       },
       amount: {

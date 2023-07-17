@@ -20,9 +20,15 @@ module.exports = (sequelize) => {
         allowNull: false,
         field: "id_employee",
       },
-      total: {
+      totalPrice: {
         type: DataTypes.FLOAT,
         allowNull: false,
+        field: "total_price",
+      },
+      totalQuantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        field: "total_quantity",
       },
       status: {
         type: DataTypes.TINYINT,

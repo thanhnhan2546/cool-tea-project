@@ -10,12 +10,19 @@ const {
   insertSize,
   deleteSize,
 } = require("../../controllers/product.controller");
+const authorization = require("../../middlewares/authorization");
+const { verifyManager } = require("../../middlewares/checkRole");
 
 const productRouter = express.Router();
 
 productRouter.get("", filterProducts());
-productRouter.post("", createProduct());
 productRouter.get("/:idCate", getProductByCategory());
+
+productRouter.use(authorization);
+
+productRouter.use(verifyManager);
+
+productRouter.post("", createProduct());
 productRouter.put("/:id", updateProduct());
 productRouter.delete("/delete/:id", deleteOreRestoreProduct(true));
 productRouter.get("/restore/:id", deleteOreRestoreProduct(false));

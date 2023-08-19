@@ -180,6 +180,21 @@ const createOrderValidate = joi.object({
     })
   ),
 });
+
+const loginCustomerValidate = joi.object({
+  email: joi
+    .string()
+    .email()
+    .message({
+      "string.email": "Invalid email format",
+    })
+    .required(),
+  password: joi.string().required(),
+});
+const loginEmployeeValidate = joi.object({
+  id: joi.string().required(),
+  password: joi.string().required(),
+});
 module.exports = {
   productValidate,
   categoryAndRoleValidate,
@@ -189,4 +204,6 @@ module.exports = {
   employeeCreateValidate,
   customerCreateValidate,
   createOrderValidate,
+  loginCustomerValidate,
+  loginEmployeeValidate,
 };

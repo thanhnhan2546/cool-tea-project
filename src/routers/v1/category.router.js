@@ -6,10 +6,16 @@ const {
   deleteOrRestoreCategory,
   deletePermanently,
 } = require("../../controllers/category.controller");
+const authorization = require("../../middlewares/authorization");
+const { verifyManager } = require("../../middlewares/checkRole");
 
 const categoryRouter = express.Router();
 
 categoryRouter.get("", getAllCategory());
+
+categoryRouter.use(authorization);
+categoryRouter.use(verifyManager);
+
 categoryRouter.post("", createCategory());
 categoryRouter.put("/:id", updateCategory());
 categoryRouter.delete("/delete/:id", deleteOrRestoreCategory(true));
